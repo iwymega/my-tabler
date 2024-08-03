@@ -1,52 +1,30 @@
-import React from "react";
+import React from 'react';
+import { MapPinIcon, TagIcon, ArrowUpTrayIcon } from '@heroicons/react/16/solid'; // Contoh ikon, sesuaikan dengan kebutuhan Anda
 
-function Sidebar() {
+function Sidebar({onSelect}) {
   return (
-    <aside class="navbar navbar-vertical navbar-expand-sm navbar-dark">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <h1 class="navbar-brand navbar-brand-autodark">
-        <a href="#">IMG
-          {/* <img src="..." width="110" height="32" alt="Tabler" class="navbar-brand-image"> */}
-        </a>
-      </h1>
-      <div class="collapse navbar-collapse" id="sidebar-menu">
-        <ul class="navbar-nav pt-lg-3">
-          <li class="nav-item">
-            <a class="nav-link" href="./">
-              <span class="nav-link-title">
-                Home
-              </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-link-title">
-                Link 1
-              </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-link-title">
-                Link 2
-              </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-link-title">
-                Link 3
-              </span>
-            </a>
-          </li>
-        </ul>
+    <div className="w-64 h-screen bg-black text-white flex flex-col fixed">
+      <div className="flex items-center justify-center h-16 bg-gray-900">
+        <h1 className="text-2xl font-bold">My App</h1>
       </div>
+      <nav className="flex-1 px-2 py-4 space-y-1">
+        <a onClick={() => onSelect('posts')} href="#" className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-gray-700">
+          <ArrowUpTrayIcon className="w-5 h-5 mr-3" />
+          Post
+        </a>
+        <a onClick={() => onSelect('category')} href="#" className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-gray-700">
+          <TagIcon className="w-5 h-5 mr-3" />
+          Category
+        </a>
+        <a onClick={() => onSelect('region')} href="#" className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-gray-700">
+          <MapPinIcon className="w-5 h-5 mr-3" /> {/* Use the imported CogIcon component */}
+          Region
+        </a>
+        {/* Tambahkan item menu lainnya di sini */}
+      </nav>
     </div>
-  </aside>
   );
 }
 
 export default Sidebar;
+

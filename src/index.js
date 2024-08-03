@@ -5,11 +5,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import '@tabler/core/dist/css/tabler.min.css';
-import Home from './pages/Home';
+// import Home from './pages/Home';
 import Login from './pages/Login'; // Tambahkan impor ini
 import Dashboard from './pages/Dashboard'; // Tambahkan impor untuk Dashboard
 import ProtectedRoute from './components/ProtectedRoute'; // Tambahkan impor untuk ProtectedRoute
 import CategoryForm from './pages/CategoryForm'; // Tambahkan impor untuk CategoryForm
+// import 'bootstrap/dist/css/bootstrap.min.css'; // Tambahkan impor ini
+// import tailwindcss dari cdn
+import 'tailwindcss/tailwind.css';
+
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

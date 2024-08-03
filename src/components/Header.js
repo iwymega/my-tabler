@@ -15,17 +15,16 @@ function Header() {
     }
   };
   return (
-    <header className="navbar navbar-expand-md navbar-light d-print-none">
-      <div className="container-xl">
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
-          <span className="navbar-toggler-icon"></span>
+    <header className="h-16 flex items-center justify-between bg-white text-gray-800 print:hidden">
+      <div className="container mx-auto flex items-center justify-between">
+        <button className="md:hidden" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+          <span className="h-6 w-6">☰</span>
         </button>
-        <h1 className="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+        <h1 className="text-xl font-bold dark:text-black hidden md:block pr-0 md:pr-3">
           <a href=".">Tabler</a>
         </h1>
-        <div className="navbar-nav flex-row order-md-last">
+        <div className="flex flex-row md:order-last">
           {/* Tambahkan konten header di sini */}
-          {/* panggil komponen button */}
           <Button type="danger" onClick={handleLogout}>Logout</Button>
 
         </div>
