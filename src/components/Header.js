@@ -15,7 +15,7 @@ function Header() {
     }
   };
   return (
-    <header className="h-16 flex items-center justify-between bg-white text-gray-800 print:hidden">
+    <header className="w-100% h-16 flex items-center justify-between bg-white text-gray-800 print:hidden">
       <div className="container mx-auto flex items-center justify-between">
         <button className="md:hidden" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
           <span className="h-6 w-6">☰</span>

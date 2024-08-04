@@ -10,6 +10,7 @@ import Login from './pages/Login'; // Tambahkan impor ini
 import Dashboard from './pages/Dashboard'; // Tambahkan impor untuk Dashboard
 import ProtectedRoute from './components/ProtectedRoute'; // Tambahkan impor untuk ProtectedRoute
 import CategoryForm from './pages/CategoryForm'; // Tambahkan impor untuk CategoryForm
+import Register from './pages/Register'; // Tambahkan impor untuk Register
 // import 'bootstrap/dist/css/bootstrap.min.css'; // Tambahkan impor ini
 // import tailwindcss dari cdn
 import 'tailwindcss/tailwind.css';
@@ -24,6 +25,8 @@ root.render(
         <Route path="/" element={<App />} />
         {/* Tambahkan rute lain di sini */}
         <Route path="/login" element={<Login />} />
+        {/* buat route register */}
+        <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
           element={
