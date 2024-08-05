@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://simple-api.gotrasoft.com/api';
+const API_URL = 'https://simple-api.gotrasoft.com/api';
 
 export const login = (email, password) => {
   return axios.post(`${API_URL}/login`, { email, password });
