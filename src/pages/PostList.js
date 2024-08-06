@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { getPosts, createPost, updatePost, deletePost } from "../api/post";
+import { getPosts, createPost, updatePost, deletePost, storageimage, IMAGE_STORAGE } from "../api/post";
 import { getCategories } from '../api/category'; // Import fungsi getCategories dari file api/category.js
 import { Button } from '../components/Button';
 import TeksEditor from '../components/TeksEditor';
 import DataTable from 'react-data-table-component';
 import { useDropzone } from 'react-dropzone';
-
-
-
-
+import TinyMCEEditor from "../components/TinyMCEEditor";
 /**
  * Renders a list of posts with create, edit, and delete functionality.
  *
@@ -29,6 +26,9 @@ function PostList() {
   const [imageCover, setImageCover] = useState(null);
   const [gallery, setGallery] = useState([]);
   const [preview, setPreview] = useState(null);
+  const [images, setImages] = useState([]);
+  const [postIdToDelete, setPostIdToDelete] = useState(null);
+
 
 
   // const [isLoading, setIsLoading] = useState(false);
@@ -58,8 +58,18 @@ function PostList() {
   //   multiple: true,
   // });
 
-
   useEffect(() => {
+    // const fetchImages = async () => {
+    //   try {
+    //     const images = await storageimage();
+    //     setImages(images);
+    //   } catch (error) {
+    //     console.error("Error fetching images:", error);
+    //   }
+    // };
+
+    // fetchImages();
+
     fetchPosts();
     getCategories().then(response => {
       setCategories(response.data);
@@ -148,14 +158,25 @@ function PostList() {
     }
   };
 
-  const handleDeletePost = async () => {
+  // const handleDeletePost = async () => {
+  //   try {
+  //     await deletePost(postToDelete);
+  //     setPosts(posts.filter(post => post.id !== postToDelete));
+  //     setConfirmModalOpen(false);
+  //     setPostToDelete(null);
+  //   } catch (error) {
+  //     console.error("Error deleting post:", error);
+  //   }
+  // };
+
+  const handleDeletePost = async (postId) => {
     try {
-      await deletePost(postToDelete);
-      setPosts(posts.filter(post => post.id !== postToDelete));
+      await deletePost(postId);
+      console.log('Post deleted successfully');
+      // Lakukan sesuatu setelah berhasil menghapus, misalnya memperbarui daftar postingan
       setConfirmModalOpen(false);
-      setPostToDelete(null);
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error('Failed to delete post:', error);
     }
   };
 
@@ -232,12 +253,30 @@ function PostList() {
               // selector: row => row.content,
               sortable: true,
             },
+            // tampilkan image_cover ini src dari backend https://simple-api.gotrasoft.com/storage/post/namafile.jpg
+            {
+              name: 'Image Cover',
+              cell: row => (
+                // <img src={row.image_cover} alt={row.title} className="h-10" />
+                // <img src={`https://simple-api.gotrasoft.com/storage/post/${row.image_cover}`} alt={row.title} className="h-10" />
+                <img src={`${IMAGE_STORAGE}${row.image_cover}`} alt={row.title} className="h-10" />
+              ),
+            },
+            // {
+            //   name: 'Image',
+            //   cell: row => {
+            //     const image = images.find(img => img.id === row.image_id);
+            //     return image ? <img src={image.image_cover} alt={row.title} style={{ width: '50px', height: '50px' }} /> : 'No Image';
+            //   },
+            // },
             {
               name: 'Actions',
               cell: row => (
                 <>
                   <Button type="warning" onClick={() => { setEditPost(row); setEditModalOpen(true); }}>Edit</Button>
-                  <Button type="danger" onClick={() => { setPostToDelete(row); setConfirmModalOpen(true); }}>Delete</Button>
+                  {/* <Button type="danger" onClick={() => { setPostToDelete(row); setConfirmModalOpen(true); }}>Delete</Button> */}
+                  <Button type="danger" onClick={() => { setPostIdToDelete(row.id); setConfirmModalOpen(true); }}>Delete</Button>
+
                 </>
               ),
             },
@@ -276,12 +315,18 @@ function PostList() {
               </div>
               <div className="form-group">
                 <label className="form-label">Content</label>
-                {/* panggil komponen editor */}
                 <TeksEditor 
                   value={newPost.content}
                   onEditorChange={(content) => setNewPost({ ...newPost, content })}
                 />
               </div>
+              {/* <div className="form-group">
+                <label className="form-label">Content TinyMCEEditor</label>
+                <TinyMCEEditor 
+                  value={newPost.content}
+                  onEditorChange={(content) => setNewPost({ ...newPost, content })}
+                />
+              </div> */}
               <div className="form-group">
                 <label className="form-label">Category</label>
                 <select
@@ -313,8 +358,8 @@ function PostList() {
                     <input {...getInputProps()} />
                     <p className="text-blue-500">Drag 'n' drop some files here, or click to select files</p>
                   </div>
+                  {preview && <img src={preview} alt="Preview" className="mt-4 border-2 border-grey-500 rounded-md w-50 h-auto" />}
                   {imageCover && <p>Selected file: {imageCover.name}</p>}
-                  {preview && <img src={preview} alt="Preview" className="mt-4 p-4 border-2 border-grey-500 rounded-md" />}
 
                   {/* <div {...getRootPropsGallery()} className="dropzone border-2 border-dashed border-blue-500 rounded-md p-4 text-center cursor-pointer transition duration-300 ease-in-out hover:bg-gray-100 mt-4">
                     <input {...getInputPropsGallery()} />
@@ -388,6 +433,22 @@ function PostList() {
                   ))}
                 </select>
               </div>
+              <div className="form-group p-4">
+                  <div {...getRootProps()} className="dropzone border-2 border-dashed border-blue-500 rounded-md p-4 text-center cursor-pointer transition duration-300 ease-in-out hover:bg-gray-100">
+                    <input {...getInputProps()} />
+                    <p className="text-blue-500">Drag 'n' drop some files here, or click to select files</p>
+                  </div>
+                  {/* jika ada gambar tampilkan <img src={`${IMAGE_STORAGE}${editPost.image_cover}`} alt={editPost.title} className="mt-4 border-2 border-grey-500 rounded-md w-50 h-auto" /> jika tidak {preview && <img src={preview} alt="Preview" className="mt-4 border-2 border-grey-500 rounded-md w-50 h-auto" />}*/}
+
+                  {preview && <img src={preview} alt="Preview" className="mt-4 border-2 border-grey-500 rounded-md w-50 h-auto" />}
+                  {imageCover && <p>Selected file: {imageCover.name}</p>}
+                  
+
+                  <img src={`${IMAGE_STORAGE}${editPost.image_cover}`} alt={editPost.title} className="mt-4 border-2 border-grey-500 rounded-md w-50 h-auto" />
+                {/* <img src={`${IMAGE_STORAGE}${row.image_cover}`} alt={row.title} className="h-10" /> */}
+                  
+
+                </div>
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={() => setEditModalOpen(false)}>Close</button>
@@ -414,7 +475,9 @@ function PostList() {
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={() => setConfirmModalOpen(false)}>Cancel</button>
-                <button className="btn btn-danger" onClick={handleDeletePost}>Delete</button>
+                {/* <button className="btn btn-danger" onClick={handleDeletePost}>Delete</button> */}
+                {/* <button className="btn btn-danger" onClick={() => handleDeletePost(posts.id)}>Delete Post</button> */}
+                <button className="btn btn-danger" onClick={() => handleDeletePost(postIdToDelete)}>Delete Post</button>
               </div>
             </div>
           </div>

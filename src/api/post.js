@@ -50,10 +50,10 @@ export const createPost = async (title, content, category_id, image_cover) => {
     }
 };
 
-export const updatePost = (id, title, content, category_id) => {
+export const updatePost = (id, title, content, category_id, image_cover) => {
     // tambahkan barer token
     const token = localStorage.getItem('token');
-    return axios.put(`${API_URL}/post/${id}`, { title, content, category_id }, {
+    return axios.put(`${API_URL}/post/${id}`, { title, content, category_id, image_cover }, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -71,3 +71,18 @@ export const deletePost = (id) => {
     });
     // return axios.delete(`${API_URL}/post/${id}`);
 };
+
+
+// Fungsi untuk mengambil gambar post dari API contoh url https://simple-api.gotrasoft.com/storage/post/gung-titile-Yfy.png
+export const storageimage = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/storage/post`);
+        return response.data;
+    } catch (error) {
+        console.error('Error saat mengambil gambar:', error.response ? error.response.data : error.message);
+        throw error;
+}
+};
+
+// API STORAGE IMAGE
+export const IMAGE_STORAGE = 'https://simple-api.gotrasoft.com/storage/post/';
