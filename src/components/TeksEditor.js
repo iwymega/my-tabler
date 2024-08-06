@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Editor as TinyMCEEditor } from '@tinymce/tinymce-react';
 
 function TeksEditor({ value, onEditorChange }) {
   const [content, setContent] = useState(value);
+  const editorRef = useRef(null);
 
     useEffect(() => {
         setContent(value);
@@ -13,6 +14,16 @@ function TeksEditor({ value, onEditorChange }) {
         onEditorChange(content);
     };
 
+    useEffect(() => {
+      return () => {
+        // Ensure the editor instance is properly removed
+        if (editorRef.current) {
+          editorRef.current.remove();
+          editorRef.current = null;
+        }
+      };
+    }, []);
+
       // const handleChange = (event) => {
     //     // Extract the value from the event
     //     const newValue = event.target.getContent();
@@ -22,6 +33,7 @@ function TeksEditor({ value, onEditorChange }) {
     return (
       <TinyMCEEditor
           apiKey='p4iw8cwk73n4hcwocjr0zv7fx52xyafph1xii1324cu9pwyb'
+          onInit={(evt, editor) => editorRef.current = editor}
           init={{
               plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
               toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',

@@ -3,6 +3,7 @@ import { getCategories, createCategory, updateCategory, deleteCategory } from '.
 import { Table, Card, Modal, Form, Input } from '@tabler/core'; // Pastikan impor dari Tabler
 import { Button } from '../components/Button';
 import { Link } from 'react-router-dom';
+import DataTable from "react-data-table-component";
 
 function CategoryList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -10,20 +11,41 @@ function CategoryList() {
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState('');
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  const filteredCategories = categories.filter(category =>
+    category.name && category.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  // useEffect(() => {
+  //   fetchCategories();
+  // }, []);
+
+  // const fetchCategories = async () => {
+  //   try {
+  //     const response = await getCategories();
+  //     const categories = response.data;
+  //     setCategories(categories);
+  //   } catch (error) {
+  //     console.error('Error fetching categories:', error);
+  //   }
+  // };
 
   const fetchCategories = async () => {
     try {
       const response = await getCategories();
-      const categories = response.data;
-      setCategories(categories);
+      setCategories(response.data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
     }
   };
+  
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // Fungsi untuk membuka modal
   const showModal = (category = null) => {
@@ -92,38 +114,73 @@ function CategoryList() {
     setCategoryToDelete(null);
   };
 
-  return (
-    <div>
-      <h1>Category List</h1>
-      {/* <Button type="primary" onClick={showModal}>Add New Category</Button> */}
-      <Button type="primary" onClick={() => showModal()}>Add New Category</Button>
-      <div className="card">
-      <div className="card-body">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((category) => (
-              <tr key={category.id}>
-                <td>{category.id}</td>
-                <td>{category.name}</td>
-                <td>
-                  {/* buat tombol edit dan delete dari componen button */}
-                    {/* <Button type="warning">Edit</Button> */}
-                    <Button type="warning" onClick={() => showModal(category)}>Edit</Button>
-                    {/* buat tombol berfungsi delete */}
-                    <Button type="danger" onClick={() => showConfirmModal(category.id)}>Delete</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  const columns = [
+    {
+      name: 'No',
+      selector: (row, index) => index + 1,
+      sortable: false,
+    },
+    {
+      name: 'Category Name',
+      selector: row => row.name,
+      sortable: true,
+    },
+    {
+      name: 'Actions',
+      cell: row => (
+        <>
+          <Button type="warning" onClick={() => { setCurrentCategory(row); setIsModalVisible(true); }}>Edit</Button>
+          <Button type="danger" onClick={() => deleteCategory(row.id)}>Delete</Button>
+        </>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="page">
+        <div className="page-single">
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12 text-center">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
+                <p>Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-4">
+      <Button className="btn btn-outline-primary mb-4" onClick={() => setIsModalVisible(true)}>Add New Category</Button>
+      {/* <h2 className="text-2xl font-bold mb-4">Category List</h2> */}
+      
+      <div className="border border-gray-300 rounded">
+        <DataTable
+          columns={columns}
+          data={filteredCategories}
+          pagination
+          fixedHeader
+          highlightOnHover
+          responsive
+          subHeader
+          subHeaderComponent={
+            <input
+              type="text"
+              placeholder="Search Categories"
+              className="form-control"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            />
+          }
+        />
+      </div>
+
       {/* Modal untuk form tambah kategori */}
       {isModalVisible && (
         <div className="modal modal-blur fade show" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
@@ -170,8 +227,6 @@ function CategoryList() {
           </div>
         </div>
       )}
-    </div>
-
     </div>
   );
 }
