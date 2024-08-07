@@ -50,16 +50,42 @@ export const createPost = async (title, content, category_id, image_cover) => {
     }
 };
 
-export const updatePost = (id, title, content, category_id, image_cover) => {
-    // tambahkan barer token
-    const token = localStorage.getItem('token');
-    return axios.put(`${API_URL}/post/${id}`, { title, content, category_id, image_cover }, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    // return axios.put(`${API_URL}/post/${id}`, { title, content, category_id });
+// export const updatePost = (id, title, content, category_id, image_cover) => {
+//     // tambahkan barer token
+//     const token = localStorage.getItem('token');
+//     return axios.put(`${API_URL}/post/${id}`, { title, content, category_id, image_cover }, {
+//         headers: {
+//             Authorization: `Bearer ${token}`,
+//         },
+//     });
+//     // return axios.put(`${API_URL}/post/${id}`, { title, content, category_id });
+// };
+
+export const updatePost = async (id, title, content, category_id, imageCover) => {
+    try {
+        // tambahkan barer token
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token tidak ditemukan');
+        }
+
+        console.log('Mengirim data ke API:', { id, title, content, category_id, imageCover });
+
+        const response = await axios.put(`${API_URL}/post/${id}`, { title, content, category_id, imageCover }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            },
+        });
+
+        console.log('Respons dari API:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error saat membuat post:', error.response ? error.response.data : error.message);
+        throw error;
+    }
 };
+
 
 export const deletePost = (id) => {
     // tambahkan barer token

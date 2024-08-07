@@ -28,6 +28,9 @@ function PostList() {
   const [preview, setPreview] = useState(null);
   const [images, setImages] = useState([]);
   const [postIdToDelete, setPostIdToDelete] = useState(null);
+  // tambahkan alert
+  const [showCreateAlert, setShowCreateAlert] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
 
 
@@ -102,6 +105,7 @@ function PostList() {
 
     if (!title || !content || !category_id) {
       console.error("Missing required fields:", { title, content, category_id });
+      alert("Please fill in all required fields.");
       setShowLoading(false);
       return;
     }
@@ -116,6 +120,9 @@ function PostList() {
 
     try {
       const response = await createPost(title, content, category_id, imageCover);
+      setShowCreateAlert(true);
+      setTimeout(() => setShowCreateAlert(false), 3000); // Hide alert after 3 seconds
+
       console.log("Response from server:", response);
 
       setPosts(prevPosts => [...prevPosts, response]);
@@ -130,25 +137,50 @@ function PostList() {
     }
   };
 
+  // untuk update data/ edit data
   const handleUpdatePost = async (id) => {
     setShowLoading(true);
-    const formData = new FormData();
-    formData.append('title', editPost.title);
-    formData.append('content', editPost.content);
-    formData.append('category_id', editPost.category_id);
-    if (imageCover) {
-      formData.append('image_cover', imageCover);
+  
+    // Check if editPost is defined
+    if (!editPost) {
+      console.error("editPost is undefined");
+      setShowLoading(false);
+      return;
     }
-    gallery.forEach((file, index) => {
-      formData.append(`gallery[${index}]`, file);
-    });
+    
+    // const { title, content, category_id } = editPost;
+
+    // Log the current state of editPost
+    console.log("Current editPost state:", editPost);
+    // Log the values before validation
+    console.log("Title:", editPost.title);
+    console.log("Content:", editPost.content);
+    console.log("Category ID:", editPost.category_id);
+
+    // Validate input
+    if (!editPost.title || !editPost.content || !editPost.category_id) {
+      console.error("Missing required fields:", { title: editPost.title, content: editPost.content, category_id: editPost.category_id });
+      setShowLoading(false);
+      return;
+    }
+
+    // const formData = new FormData();
+    // formData.append('title', editPost.title);
+    // formData.append('content', editPost.content);
+    // formData.append('category_id', editPost.category_id);
+    // if (imageCover) {
+    //   formData.append('image_cover', editPost.imageCover);
+    // }
+
+    // // console log isi dari formData
+    // console.log('isi dari formData', formData);
 
     try {
-      const response = await updatePost(id, formData);
+      const response = await updatePost(id, editPost.title, editPost.content, editPost.category_id, imageCover);
+
       setPosts(posts.map(post => (post.id === id ? response.data : post)));
       setEditPost(null);
       setImageCover(null);
-      setGallery([]);
       setEditModalOpen(false);
       fetchPosts();
     } catch (error) {
@@ -172,9 +204,12 @@ function PostList() {
   const handleDeletePost = async (postId) => {
     try {
       await deletePost(postId);
+      setShowDeleteAlert(true);
+      setTimeout(() => setShowDeleteAlert(false), 3000); // Hide alert after 3 seconds
       console.log('Post deleted successfully');
       // Lakukan sesuatu setelah berhasil menghapus, misalnya memperbarui daftar postingan
       setConfirmModalOpen(false);
+      fetchPosts(); // Uncomment this if you have a function to fetch posts
     } catch (error) {
       console.error('Failed to delete post:', error);
     }
@@ -196,6 +231,8 @@ function PostList() {
   };
 
   const filteredPosts = posts.filter(post => {
+    if (!post) return false; // Pastikan post tidak undefined
+
     const title = post.title ? post.title.toLowerCase() : '';
     const content = post.content ? stripHTML(post.content).toLowerCase() : '';
     const category = categories.find(cat => cat.id === post.category_id)?.name ? categories.find(cat => cat.id === post.category_id).name.toLowerCase() : '';
@@ -230,6 +267,18 @@ function PostList() {
   
   return (
     <div className="container mx-auto p-4">
+      {showCreateAlert && (
+        <div className="fixed top-0 right-0 mt-4 mr-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded" role="alert">
+          <strong className="font-bold">Success!</strong>
+          <span className="block sm:inline"> Post created successfully.</span>
+        </div>
+      )}
+      {showDeleteAlert && (
+        <div className="fixed top-0 right-0 mt-4 mr-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
+          <strong className="font-bold">Deleted!</strong>
+          <span className="block sm:inline"> Post deleted successfully.</span>
+        </div>
+      )}
       <Button type="btn btn-outline-primary" onClick={() => setCreateModalOpen(true)}>Create Post</Button>
       <input 
         type="text" 
@@ -303,7 +352,11 @@ function PostList() {
             </div>
             <div className="modal-body">
               <div className="form-group">
-                <label className="form-label">Title</label>
+                <label className="form-label">
+                  Title
+                  <span className="text-red-500">*</span>
+                </label>
+                
                 <input
                   type="text"
                   className="form-control"
@@ -314,10 +367,15 @@ function PostList() {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Content</label>
+                <label className="form-label">
+                  Content
+                  <span className="text-red-500">*</span>
+                </label>
+                
                 <TeksEditor 
                   value={newPost.content}
                   onEditorChange={(content) => setNewPost({ ...newPost, content })}
+                  required
                 />
               </div>
               {/* <div className="form-group">
@@ -328,7 +386,11 @@ function PostList() {
                 />
               </div> */}
               <div className="form-group">
-                <label className="form-label">Category</label>
+                <label className="form-label">
+                  Category
+                  <span className="text-red-500">*</span>
+                </label>
+                
                 <select
                   className="form-control"
                   value={newPost.category_id}
