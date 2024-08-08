@@ -15,19 +15,13 @@ function Header() {
     }
   };
   return (
-    <header className="w-100% h-16 flex items-center justify-between bg-white text-gray-800 print:hidden">
-      <div className="container mx-auto flex items-center justify-between">
-        <button className="md:hidden" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
-          <span className="h-6 w-6">☰</span>
-        </button>
-        <h1 className="text-xl font-bold dark:text-black hidden md:block pr-0 md:pr-3">
-          <a href=".">Tabler</a>
-        </h1>
-        <div className="flex flex-row md:order-last">
-          {/* Tambahkan konten header di sini */}
-          <Button type="danger" onClick={handleLogout}>Logout</Button>
-
-        </div>
+    <header className="h-16 flex justify-between bg-white text-gray-800 print:hidden container mx-auto flex items-center justify-between">
+      <h1 className="text-xl font-bold dark:text-black hidden md:block pr-0 md:pr-3">
+        <a href=".">Tabler</a> 
+      </h1>
+      <div className="flex flex-row md:order-last">
+        {/* Tambahkan konten header di sini */}
+        <Button type="danger" onClick={handleLogout}>Logout</Button>
       </div>
     </header>
   );

@@ -23,10 +23,10 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="page">
       <Sidebar onSelect={setSelectedComponent} className="w-64 bg-black text-white" />
       <div className="flex flex-col ml-64">
-        <Header className="bg-gray-100 p-4 shadow fixed" />
+        <Header className="bg-gray-100 w-full p-4 shadow fixed" />
         <div className="flex-1 p-6 bg-gray-50">
           <div className="container mx-auto">
             <div className="grid grid-cols-1 gap-6">

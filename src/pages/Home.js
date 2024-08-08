@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import LatestPosts from './LatestPosts';
+import NewsPost from './NewsPost';
 
 const navigation = [
   { name: 'Product', href: '#' },
@@ -157,6 +159,10 @@ function Home() {
           />
         </div>
       </div>
+      {/* panggil component latesposts */}
+      <LatestPosts />
+      
+
     </div>
   );
 }

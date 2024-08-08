@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPinIcon, TagIcon, ArrowUpTrayIcon } from '@heroicons/react/16/solid'; // Contoh ikon, sesuaikan dengan kebutuhan Anda
+import { MapPinIcon, TagIcon, ArrowUpTrayIcon, CogIcon } from '@heroicons/react/16/solid'; // Contoh ikon, sesuaikan dengan kebutuhan Anda
 
 function Sidebar({onSelect}) {
   return (
@@ -21,6 +21,11 @@ function Sidebar({onSelect}) {
           Region
         </a>
         {/* Tambahkan item menu lainnya di sini */}
+        {/* saya ingin menambahkan menu seting/help yang isinya logout */}
+        <a onClick={() => onSelect('setting')} href="#" className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-gray-700">
+          <CogIcon className="w-5 h-5 mr-3" />
+          Setting
+        </a>
       </nav>
     </div>
   );

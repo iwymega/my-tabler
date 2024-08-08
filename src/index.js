@@ -11,6 +11,8 @@ import Dashboard from './pages/Dashboard'; // Tambahkan impor untuk Dashboard
 import ProtectedRoute from './components/ProtectedRoute'; // Tambahkan impor untuk ProtectedRoute
 import CategoryForm from './pages/CategoryForm'; // Tambahkan impor untuk CategoryForm
 import Register from './pages/Register'; // Tambahkan impor untuk Register
+import NewsPost from './pages/NewsPost';
+import DetailPost from './pages/DetailPost';
 // import 'bootstrap/dist/css/bootstrap.min.css'; // Tambahkan impor ini
 // import tailwindcss dari cdn
 import 'tailwindcss/tailwind.css';
@@ -37,7 +39,8 @@ root.render(
         />
         {/* buat route categoryform */}
         <Route path="/category-form" element={<CategoryForm />} />
-        
+        <Route path="/post/:id" element={<DetailPost />} />
+        <Route path="/" element={<NewsPost />} />
       </Routes>
     </Router>
   </React.StrictMode>
